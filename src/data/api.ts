@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { eventSchema, eventsResponseSchema, type Event } from './schema';
+import { eventsResponseSchema, type Event } from './schema';
 
 const MOCK_EVENTS: Event[] = [
   {
@@ -29,16 +29,12 @@ const MOCK_EVENTS: Event[] = [
 ];
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-const useMock = !apiUrl || apiUrl === 'https://api.example.com';
 
 const api = axios.create({
   baseURL: apiUrl || 'https://api.example.com',
 });
 
 export async function fetchEvents(): Promise<Event[]> {
-  if (useMock) {
-    return MOCK_EVENTS;
-  }
   const response = await api.get<unknown>('/events');
   return eventsResponseSchema.parse(response.data);
 }
