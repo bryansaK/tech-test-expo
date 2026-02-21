@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { eventsResponseSchema, type Event } from './schema';
+import { eventSchema, eventsResponseSchema, type Event } from './schema';
 
 const MOCK_EVENTS: Event[] = [
   {
@@ -51,8 +51,12 @@ export async function fetchEvents(): Promise<Event[]> {
   return eventsResponseSchema.parse(response.data.events);
 }
 
+type EventDetailApiResponse = {
+  events: Event;
+};
+
 export async function fetchEventDetails(id: string): Promise<Event> {
-  const response = await api.get<EventsApiResponse>(`/events/${id}`);
-  return eventsResponseSchema.parse(response.data.events)[0];
+  const response = await api.get<EventDetailApiResponse>(`/events/${id}`);
+  return eventSchema.parse(response.data.events);
 }
 

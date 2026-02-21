@@ -10,7 +10,7 @@ import type { Event } from '@/data/schema';
 import { EventDetailCard } from '../components/EventDetailCard';
 
 export function EventDetailPage() {
-  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,8 @@ export function EventDetailPage() {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchEventDetails(String(id));
+        const data = await fetchEventDetails(id);
+        console.log('Fetched Event Details:', data);
         setEvent(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur lors du chargement de l'événement");
