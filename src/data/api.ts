@@ -34,9 +34,25 @@ const api = axios.create({
   baseURL: apiUrl || 'https://api.example.com',
 });
 
+type Pagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+type EventsApiResponse = {
+  events: Event[];
+  pagination: Pagination;
+};
+
 export async function fetchEvents(): Promise<Event[]> {
-  const response = await api.get<unknown>('/events');
-  return eventsResponseSchema.parse(response.data);
+  const response = await api.get<EventsApiResponse>('/events');
+  return eventsResponseSchema.parse(response.data.events);
 }
 
-// TODO: Add API calls for event detail
+export async function fetchEventDetails(id: string): Promise<Event> {
+  const response = await api.get<EventsApiResponse>(`/events/${id}`);
+  return eventsResponseSchema.parse(response.data.events)[0];
+}
+

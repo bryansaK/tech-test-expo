@@ -1,7 +1,10 @@
+import { useState } from 'react';
+
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { Badge } from '@/components/Badge';
 import { Card } from '@/components/Card';
 import { Text } from '@/components/Text';
 import { radius } from '@/constants/theme';
@@ -14,10 +17,13 @@ type EventCardProps = {
 
 export function EventCard({ event }: EventCardProps) {
   const router = useRouter();
+  const [isTitleHovered, setIsTitleHovered] = useState(false);
 
   return (
     <Pressable
       onPress={() => router.push(`/events/${event.id}` as const)}
+      onHoverIn={() => setIsTitleHovered(true)}
+      onHoverOut={() => setIsTitleHovered(false)}
       style={({ pressed }) => [pressed && styles.pressed]}>
       <Card style={styles.card}>
         {event.imageUrl ? (
@@ -26,7 +32,14 @@ export function EventCard({ event }: EventCardProps) {
           <View style={styles.imagePlaceholder} />
         )}
         <View style={styles.content}>
-          <Text size="L">{event.title}</Text>
+          <Badge>{"Culture"}</Badge>
+          <Text
+            size="L"
+            style={styles.title}
+            numberOfLines={isTitleHovered ? undefined : 2}
+            ellipsizeMode="tail">
+            {event.title}
+          </Text>
           <Text size="S" muted style={styles.date}>{formatDate(event.date)}</Text>
           {event.location ? (
             <Text size="S" muted style={styles.location}>{event.location}</Text>
@@ -44,6 +57,11 @@ const styles = StyleSheet.create({
   card: {
     padding: 12,
     flexDirection: 'row',
+    width: '100%',
+    maxWidth: 390,
+    minHeight: 120,
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   image: {
     width: 96,
@@ -64,12 +82,17 @@ const styles = StyleSheet.create({
     gap: 4,
     justifyContent: 'center',
   },
+  title: {
+    fontSize: 22,
+    lineHeight: 30,
+    flexShrink: 1,
+  },
   date: {
-    fontSize: 14,
+    fontSize: 13.7,
     opacity: 0.8,
   },
   location: {
-    fontSize: 14,
+    fontSize: 13.7,
     opacity: 0.7,
   },
 });
