@@ -35,7 +35,9 @@ export function EventDetailCard({ event }: EventDetailCardProps) {
         <Text size="S" muted style={styles.description}>{event.description}</Text>
       ) : null}
 
-      <Button>Ajouter au calendrier</Button>
+      <Button disabled style={styles.button}>
+        Ajouter au calendrier
+      </Button>
     </Card>
   );
 }
@@ -47,6 +49,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 16,
     gap: 12,
+    textAlign: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    height: 350,
     borderRadius: radius.lg,
     marginTop: 8,
     marginBottom: 8,
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   button: {
+    alignSelf: 'center',
     marginTop: 12,
   },
 });

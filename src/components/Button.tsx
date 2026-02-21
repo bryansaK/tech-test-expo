@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { Colors, radius } from '@/constants/theme';
 
@@ -14,6 +14,7 @@ export type ButtonProps = {
   disabled?: boolean;
   color?: ButtonColor;
   size?: ButtonSize;
+  style?: StyleProp<ViewStyle>;
 };
 
 const colorMap: Record<ButtonColor, { bg: string; text: string }> = {
@@ -34,6 +35,7 @@ export function Button({
   disabled = false,
   color = 'blue',
   size = 'md',
+  style,
 }: ButtonProps) {
   const { bg, text } = colorMap[color];
   const { paddingH, paddingV, fontSize } = sizeMap[size];
@@ -45,12 +47,13 @@ export function Button({
       style={({ pressed }) => [
         styles.button,
         {
-          backgroundColor: bg,
+          backgroundColor: disabled ? Colors.foregroundMuted : bg,
           paddingHorizontal: paddingH,
           paddingVertical: paddingV,
           borderRadius: radius.md,
           opacity: disabled ? 0.5 : pressed ? 0.9 : 1,
         },
+        style,
       ]}>
       <View style={styles.content}>
         <Text style={[styles.label, { color: text, fontSize }]}>{children}</Text>
