@@ -60,3 +60,25 @@ export async function fetchEventDetails(id: string): Promise<Event> {
   return eventSchema.parse(response.data.events);
 }
 
+type AuthPayload = {
+  email: string;
+  password: string;
+};
+
+type AuthResponse = {
+  user: {
+    id: string;
+    email: string;
+  };
+};
+
+export async function login(payload: AuthPayload): Promise<AuthResponse> {
+  const response = await api.post<AuthResponse>('/login', payload);
+  return response.data;
+}
+
+export async function register(payload: AuthPayload): Promise<AuthResponse> {
+  const response = await api.post<AuthResponse>('/register', payload);
+  return response.data;
+}
+
