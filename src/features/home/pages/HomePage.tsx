@@ -10,7 +10,7 @@ import { useAuth } from '@/features/auth/AuthContext';
 import { navigate } from 'expo-router/build/global-state/routing';
 
 export function HomePage() {
-  const { isAuthenticated, login, register, email: authEmail  } = useAuth();
+  const { isAuthenticated, login, register, email: authEmail, logout  } = useAuth();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -93,6 +93,11 @@ export function HomePage() {
               </Text>
             </Link>
           ) : null}
+          {isAuthenticated ? (
+            <Button  style={styles.logoutButton} onPress={() => logout()} color="blue">
+              logout
+            </Button>
+          ) : null}
         </Container>
       </ScrollView>
     </Container>
@@ -139,6 +144,10 @@ const styles = StyleSheet.create({
     color: '#c62828',
   },
   switchButton: {
+    marginTop: 8,
+  },
+  logoutButton: {
+    backgroundColor: '#c62828',
     marginTop: 8,
   },
   link: {
