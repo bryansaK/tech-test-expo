@@ -33,6 +33,11 @@ export async function fetchEventDetails(id: string): Promise<Event> {
   return eventSchema.parse(response.data.events);
 }
 
+export async function fetchUserCalendar(userId: string): Promise<Event[]> {
+  const response = await api.get<EventsApiResponse>(`/users/${userId}/calendar`);
+  return eventsResponseSchema.parse(response.data.events);
+}
+
 type AuthPayload = {
   email: string;
   password: string;
@@ -45,6 +50,15 @@ type AuthResponse = {
   };
 };
 
+type AddToCalendarPayload = {
+  eventId: string;
+};
+
+type AddToCalendarResponse = {
+  message: string;
+  calendarId: string;
+};
+
 export async function login(payload: AuthPayload): Promise<AuthResponse> {
   const response = await api.post<AuthResponse>('/login', payload);
   return response.data;
@@ -52,6 +66,17 @@ export async function login(payload: AuthPayload): Promise<AuthResponse> {
 
 export async function register(payload: AuthPayload): Promise<AuthResponse> {
   const response = await api.post<AuthResponse>('/register', payload);
+  return response.data;
+}
+
+export async function addEventToCalendar(
+  userId: string,
+  payload: AddToCalendarPayload,
+): Promise<AddToCalendarResponse> {
+  const response = await api.post<AddToCalendarResponse>(
+    `/users/${userId}/calendar`,
+    payload,
+  );
   return response.data;
 }
 

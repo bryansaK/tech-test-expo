@@ -7,10 +7,11 @@ import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
 import { Text } from '@/components/Text';
 import { useAuth } from '@/features/auth/AuthContext';
+import { Calendar } from '@/features/events/components/Calendar';
 import { navigate } from 'expo-router/build/global-state/routing';
 
 export function HomePage() {
-  const { isAuthenticated, login, register, email: authEmail, logout  } = useAuth();
+  const { isAuthenticated, login, register, email: authEmail, logout, userId } = useAuth();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -86,17 +87,21 @@ export function HomePage() {
             </Button>
           </View>
 }
-          {isAuthenticated ? (
-            <Link href="/(tabs)/events" asChild>
-              <Text size="M" style={styles.link}>
-                Accéder à la liste des événements
-              </Text>
-            </Link>
+          {isAuthenticated && userId ? (
+            <Calendar userId={userId} />
           ) : null}
+
           {isAuthenticated ? (
-            <Button  style={styles.logoutButton} onPress={() => logout()} color="blue">
-              logout
-            </Button>
+            <>
+              <Link href="/(tabs)/events" asChild>
+                <Text size="M" style={styles.link}>
+                  Accéder à la liste des événements
+                </Text>
+              </Link>
+              <Button style={styles.logoutButton} onPress={() => logout()} color="blue">
+                Logout
+              </Button>
+            </>
           ) : null}
         </Container>
       </ScrollView>

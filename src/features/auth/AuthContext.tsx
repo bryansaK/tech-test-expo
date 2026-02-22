@@ -6,6 +6,8 @@ export type AuthContextValue = {
     email: string | null;
     userId: string | null;
     isAuthenticated: boolean;
+    calendarVersion: number;
+    bumpCalendarVersion: () => void;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string) => Promise<void>;
     logout: () => void;
@@ -17,6 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userId, setUserId] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
+    const [calendarVersion, setCalendarVersion] = useState(0);
 
     async function login(email: string, password: string) {
         const { user } = await apiLogin({ email, password });
@@ -32,14 +35,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(true);
     }
 
+    function bumpCalendarVersion() {
+        setCalendarVersion((v) => v + 1);
+    }
+
     function logout() {
         setIsAuthenticated(false);
         setEmail(null);
         setUserId(null);
+        setCalendarVersion(0);
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, register, logout, userId, email }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, register, logout, userId, email, calendarVersion, bumpCalendarVersion }}>
             {children}
         </AuthContext.Provider>
     );

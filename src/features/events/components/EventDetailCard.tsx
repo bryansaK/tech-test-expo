@@ -1,12 +1,15 @@
 import { Image } from 'expo-image';
-import { StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Text } from '@/components/Text';
 import { radius } from '@/constants/theme';
+import { addEventToCalendar } from '@/data/api';
 import type { Event } from '@/data/schema';
+import { useAuth } from '@/features/auth/AuthContext';
 import { formatDate } from '@/helpers';
 
 type EventDetailCardProps = {
@@ -14,6 +17,28 @@ type EventDetailCardProps = {
 };
 
 export function EventDetailCard({ event }: EventDetailCardProps) {
+  const { userId, isAuthenticated, bumpCalendarVersion } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleAddToCalendar() {
+    if (!isAuthenticated || !userId) {
+      Alert.alert('Connexion requise', 'Connecte-toi pour ajouter un événement à ton calendrier.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await addEventToCalendar(userId, { eventId: event.id });
+      bumpCalendarVersion();
+      Alert.alert('Succès', 'Événement ajouté à ton calendrier.');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Impossible d'ajouter cet événement";
+      Alert.alert('Erreur', message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <Card style={styles.card}>
       <View style={styles.header}>
@@ -35,8 +60,11 @@ export function EventDetailCard({ event }: EventDetailCardProps) {
         <Text size="S" muted style={styles.description}>{event.description}</Text>
       ) : null}
 
-      <Button disabled style={styles.button}>
-        Ajouter au calendrier
+      <Button
+        style={styles.button}
+        onPress={handleAddToCalendar}
+        disabled={submitting || !isAuthenticated}>
+        {submitting ? 'Ajout en cours...' : 'Ajouter au calendrier'}
       </Button>
     </Card>
   );
